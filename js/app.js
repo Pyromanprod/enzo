@@ -127,6 +127,6 @@ $(function () {
     }
     function colorBulles() {
         lesBulles.css("color", "black");
-        lesBulles.eq(index).css("color", "blue");
+        lesBulles.eq(index).css("color", "red");
     }
 });
