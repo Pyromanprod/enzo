@@ -1,0 +1,12 @@
+div.content-img{
+    overflow: hidden;
+    height: 500px;
+    padding: 0;
+}
+img{
+    position: absolute;
+    width: 100%;
+    object-fit: contain;
+    margin: 0;
+    padding: 0;
+}
