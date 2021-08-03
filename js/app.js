@@ -2,11 +2,10 @@ $(function () {
 
     let img = $("div.container div.row .content-img img");
     let index = 0;
-    let arrowRight = $("#flecheDroite");
-    let arrowLeft = $("#flecheGauche");
     let largeur = $(".content-img").width();
     let vitesse = 800;
     let bulleContent = $(".bulle-content");
+    let endAnime = true;//verifi fend d'anime
 
 
     img.hide();
@@ -19,58 +18,85 @@ $(function () {
     });
     //on récupére les bulles
     let lesBulles = $("div.bulle-content .bulle");
+    colorBulles();//on les colores
     //AU clic sur les bulles
-    $("div.bulle-content .bulle").click(function (event) {
-        imgIndex($(this).index("div.bulle-content .bulle"));
-        colorBulles();
+    lesBulles.click(function (event) {
+        if (endAnime) {
+
+            imgIndex($(this).index("div.bulle-content .bulle"));
+            colorBulles();
+        }
+
+
     });
-    colorBulles();
+
 
     //CLIC FLECHE DE DROITE
-    arrowRight.click(function (e) {
-        e.preventDefault();
-        imgUp();
-        colorBulles();
+    $("#flecheDroite").click(function (e) {
+        if (endAnime) {
+            imgUp();
+            colorBulles();
+
+        }
     });
     //CLIC FLECHE DE GAUCHE
-    arrowLeft.click(function (e) {
-        e.preventDefault();
-        imgDown();
-        colorBulles();
+    $("#flecheGauche").click(function (e) {
+        if (endAnime) {
+
+            imgDown();
+            colorBulles();
+        }
     });
 
-    //fonction qui change les images de gauche a droite
+    /**
+     * Change l'image avec un slider de gauche a droite
+     * 
+     * @author Renaud Kieffer
+     */
+
     function imgUp() {
 
 
+        endAnime = false;
+        //Récupère l'image déjà afficher
         let imgEnCour = img.eq(index);
+
+        //incrémente pour la prochaine image
         index++;
         if (index == img.length) {
             index = 0;
         }
         let imgSuivante = img.eq(index);
-        //Décalage de l'image déjà affiché
-        imgEnCour.animate({ left: largeur }, vitesse,
-            function () {
-                imgEnCour.hide();
-                imgEnCour.css("left", 0);
-            });
+
         //placement de l'image suivante a gauche du content-img
-        //+ affichage de cette dernière
+        //+ déplacement de cette dernière
 
         imgSuivante.animate({ left: -largeur }, 0, //le 0 ici signifie 0ms pour ce placer a gauche
             //une fois l'image suivante a gauche
-            //on la fait glisser a droite
+            //on fait tout glisser a droite
             function () {
                 imgSuivante.show();
-                imgSuivante.animate({ left: 0 }, vitesse);
+                imgEnCour.animate({ left: largeur }, vitesse,
+                    function () {
+                        imgEnCour.hide();
+                        imgEnCour.css("left", 0);
+                    });
+                //Décalage de l'image déjà affiché
+
+                imgSuivante.animate({ left: 0 }, vitesse, () => { endAnime = true; });
 
             });
 
+
     }
-    //Fonction qui change les image de droite a gauche
+    /**
+  * Change l'image avec un slider de droite a gauche
+  *
+  * @author Renaud Kieffer
+  */
     function imgDown() {
 
+        endAnime = false;
         let imgEnCour = img.eq(index);
         index--
         if (index < 0) {
@@ -96,35 +122,52 @@ $(function () {
                     });
 
                 imgSuivante.show();
-                imgSuivante.animate({ left: 0 }, vitesse);
+                imgSuivante.animate({ left: 0 }, vitesse, () => { endAnime = true; });
             }
         );
     }
-
+    /**
+     * Change l'image en fonction de l'index
+     * 
+     * @author Renaud Kieffer
+     * @param {number} i L'index de l'image à afficher
+     */
     function imgIndex(i) {
+        //vérifie si l'image en cours n'est pas la même que l'image suivante
+        if (i != index) {
+            endAnime = false;
+            let imgEnCour = img.eq(index);
+            let imgSuivante = img.eq(i);
+            console.log();
+            index = i;
+            //Décalage de l'image déjà affiché
+            imgEnCour.animate({ left: largeur }, vitesse,
+                function () {
+                    imgEnCour.hide();
+                });
+            //placement de l'image suivante a gauche du content-img
+            //+ affichage de cette dernière
 
-        let imgEnCour = img.eq(index);
+            imgSuivante.animate({ left: -largeur }, 0, //le 0 ici signifie 0ms pour ce placer a gauche
+                //une fois l'image suivante a gauche
+                //on la fait glisser a droite
+                function () {
+                    imgSuivante.show();
+                    imgSuivante.animate({ left: 0 }, vitesse, () => { endAnime = true });
 
-        let imgSuivante = img.eq(i);
-        index = i;
-        //Décalage de l'image déjà affiché
-        imgEnCour.animate({ left: largeur }, vitesse,
-            function () {
-                imgEnCour.hide();
-            });
-        //placement de l'image suivante a gauche du content-img
-        //+ affichage de cette dernière
+                }
+            );
 
-        imgSuivante.animate({ left: -largeur }, 0, //le 0 ici signifie 0ms pour ce placer a gauche
-            //une fois l'image suivante a gauche
-            //on la fait glisser a droite
-            function () {
-                imgSuivante.show();
-                imgSuivante.animate({ left: 0 }, vitesse);
-
-            }
-        );
+        }
     }
+
+    /**
+     * Colores les bulles en noir si inactive et
+     * en rouge Si active
+     *
+     * @author Renaud Kieffer
+     *
+     */
     function colorBulles() {
         lesBulles.css("color", "black");
         lesBulles.eq(index).css("color", "red");
