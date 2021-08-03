@@ -7,6 +7,11 @@ img{
     position: absolute;
     width: 100%;
     object-fit: contain;
-    margin: 0;
-    padding: 0;
+}
+.row i{
+    font-size: 3rem;
+}
+
+.gauche{
+    
 }
